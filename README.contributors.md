@@ -9,7 +9,7 @@ Please check from time to time, if the issue is fixed and remove this hint.
 
 ## Report issues
 
-Visit <https://github.com/rljson/io-test/issues>
+Visit <https://github.com/rljson/validate/issues>
 
 Check if there is already an issue for your problem
 
@@ -20,8 +20,8 @@ If no, report the issue
 ```bash
 mkdir rljson
 cd rljson
-git clone https://github.com/rljson/io-test.git
-cd io-test
+git clone https://github.com/rljson/validate.git
+cd validate
 ```
 
 ## Install dependencies
@@ -57,7 +57,15 @@ npm run build
 Make publish dry-run
 
 ```bash
-npm publish --dry-run
+npm publish --access=public --dry-run
+```
+
+Check the changes to uploaded
+
+Publish the package
+
+```bash
+npm publish --access=public
 ```
 
 ## Architecture
