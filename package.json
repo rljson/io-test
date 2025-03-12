@@ -41,6 +41,7 @@
     "eslint-plugin-tsdoc": "^0.4.0",
     "globals": "^16.0.0",
     "jsdoc": "^4.0.4",
+    "read-pkg": "^9.0.1",
     "typescript": "~5.8.2",
     "typescript-eslint": "^8.26.1",
     "vite": "^6.2.1",
@@ -56,10 +57,10 @@
     "overrides": {}
   },
   "dependencies": {
-    "vitest": "^3.0.8",
     "@rljson/hash": "^0.0.9",
     "@rljson/io": "^0.0.4",
     "@rljson/json": "^0.0.7",
-    "@rljson/rljson": "^0.0.7"
+    "@rljson/rljson": "^0.0.7",
+    "vitest": "^3.0.8"
   }
 }
