@@ -47,7 +47,6 @@
     "vite-node": "^3.0.8",
     "vite-plugin-dts": "^4.5.3",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.0.8",
     "vitest-dom": "^0.1.1"
   },
   "pnpm": {
@@ -57,6 +56,7 @@
     "overrides": {}
   },
   "dependencies": {
+    "vitest": "^3.0.8",
     "@rljson/hash": "^0.0.9",
     "@rljson/io": "^0.0.4",
     "@rljson/json": "^0.0.7",
