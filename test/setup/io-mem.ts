@@ -13,12 +13,41 @@ import { ContentType, Rljson, TableType } from '@rljson/rljson';
  * In-Memory implementation of the Rljson Io interface.
  */
 export class IoMem implements Io {
+  // ...........................................................................
+  // Geeral
   isReady() {
     return Promise.resolve();
   }
 
-  /* v8 ignore start */
-  async createTable(request: {
+  // ...........................................................................
+  // Read and write data
+
+  readRow(request: { table: string; rowHash: string }): Promise<Rljson> {
+    return this._readRow(request);
+  }
+
+  write(request: { data: Rljson }): Promise<void> {
+    return this._write(request);
+  }
+
+  // ...........................................................................
+  // Table management
+  createTable(request: { name: string; type: ContentType }): Promise<void> {
+    return this._createTable(request);
+  }
+
+  async tables(): Promise<string[]> {
+    const keys = Object.keys(this._data);
+    const tables = keys.filter((key) => !key.startsWith('_'));
+    return tables;
+  }
+
+  // ######################
+  // Private
+  // ######################
+
+  // ...........................................................................
+  private async _createTable(request: {
     name: string;
     type: ContentType;
   }): Promise<void> {
@@ -43,9 +72,12 @@ export class IoMem implements Io {
       };
     }
   }
-  /* v8 ignore stop */
+
   // ...........................................................................
-  async readRow(request: { table: string; rowHash: string }): Promise<Rljson> {
+  private async _readRow(request: {
+    table: string;
+    rowHash: string;
+  }): Promise<Rljson> {
     const table = this._data[request.table] as TableType;
 
     if (!table) {
@@ -77,7 +109,7 @@ export class IoMem implements Io {
   }
 
   // ...........................................................................
-  async write(request: { data: Rljson }): Promise<void> {
+  private async _write(request: { data: Rljson }): Promise<void> {
     const addedData = hsh(request.data);
     const tables = Object.keys(addedData);
 
@@ -118,10 +150,6 @@ export class IoMem implements Io {
     const throwIfOnWrongHashes = false;
     hip(this._data, updateExistingHashes, throwIfOnWrongHashes);
   }
-
-  // ######################
-  // Private
-  // ######################
 
   private _data: Hashed<Rljson> = hip({});
 }

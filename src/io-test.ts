@@ -48,11 +48,35 @@ export class IoTest {
       afterAll(async () => {});
 
       describe('createTable(request)', () => {
-        it('creates the table, when it not exists', async () => {});
+        it('should add a table', async () => {
+          await io.createTable({ name: 'table1', type: 'properties' });
+          let tables = await io.tables();
+          expect(tables).toEqual(['table1']);
 
-        it('throws when the table already exists with a different type', async () => {});
+          await io.createTable({ name: 'table2', type: 'cake' });
+          tables = await io.tables();
+          expect(tables).toEqual(['table1', 'table2']);
+        });
 
-        it('does nothing when the table already exists with the same type', async () => {});
+        describe('createTable', async () => {
+          describe('throws', async () => {
+            it('if the table already exists with a different type', async () => {
+              await io.createTable({ name: 'table', type: 'properties' });
+              await expect(
+                io.createTable({ name: 'table', type: 'buffet' }),
+              ).rejects.toThrow();
+            });
+          });
+
+          describe('does nothing', async () => {
+            it('if the table already exists with the same type', async () => {
+              await io.createTable({ name: 'table', type: 'properties' });
+              expect(await io.tables()).toEqual(['table']);
+              await io.createTable({ name: 'table', type: 'properties' });
+              expect(await io.tables()).toEqual(['table']);
+            });
+          });
+        });
       });
 
       describe('write(request)', () => {

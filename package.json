@@ -22,7 +22,7 @@
   "type": "module",
   "scripts": {
     "build": "npx vite build && tsc && cp README* dist && mkdir dist/src && cp src/example.ts dist/src",
-    "test": "npx vitest run --coverage && npm run lint",
+    "test": "pnpm copyIoMem && npx vitest run --coverage && npm run lint",
     "prebuild": "npm run test",
     "prepublishOnly": "npm run build && npm run test",
     "lint": "npx eslint",
@@ -54,7 +54,9 @@
     "onlyBuiltDependencies": [
       "esbuild"
     ],
-    "overrides": {}
+    "overrides": {
+      "@rljson/io": "link:../../../.pnpm/global/5/node_modules/@rljson/io"
+    }
   },
   "dependencies": {
     "@rljson/hash": "^0.0.9",

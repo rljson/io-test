@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  '@rljson/io': link:../../../.pnpm/global/5/node_modules/@rljson/io
+
 importers:
 
   .:
@@ -12,8 +15,8 @@ importers:
         specifier: ^0.0.9
         version: 0.0.9
       '@rljson/io':
-        specifier: ^0.0.4
-        version: 0.0.4
+        specifier: link:../../../.pnpm/global/5/node_modules/@rljson/io
+        version: link:../../../.pnpm/global/5/node_modules/@rljson/io
       '@rljson/json':
         specifier: ^0.0.7
         version: 0.0.7
@@ -403,24 +406,12 @@ packages:
     resolution: {integrity: sha512-o29trLdi1wTZ3l+g8KCHHWevq78WXsk5+gq1KN5qoAKarpY0+jjVBJVBEycqoUJKE3tPN19ca+eQR4hOoK6tMw==}
     engines: {node: '>=22.14.0'}
 
-  '@rljson/io@0.0.4':
-    resolution: {integrity: sha512-MZbl3oXL5XvLn5LzlGjrYJg3wYAt4k0lYIn/Krz9L1JtjcW3IKXzCn8a33D0BWgT6EKJo4Pbd1qa5gY8rPXRCQ==}
-    engines: {node: '>=22.14.0'}
-
   '@rljson/json@0.0.7':
     resolution: {integrity: sha512-8he5W+EVRH8Rwgtjzz9YNvqp506PZlzmxuNmeI4rwru3vCIlIQ9Yy46cqcpeUQc2VQbSj5enoPvNGOAJDkisZg==}
     engines: {node: '>=22.14.0'}
 
-  '@rljson/rljson@0.0.6':
-    resolution: {integrity: sha512-Q5kwW2dEYYf8Perl/xRHZ1dWGipoyXKuNwycB9vd+RMLJucuSgKdn0vChqqYrQ09LvuIUMlrgMuxDLNtO43wnw==}
-    engines: {node: '>=22.14.0'}
-
   '@rljson/rljson@0.0.7':
     resolution: {integrity: sha512-ym7m/25QXv7fZxgCXfmfSnZwKULn3xN09jqPxRofPwajot+OL7zqbezWOL+x2wOLrmR+EswmSVCvUk7kUc4YCA==}
-    engines: {node: '>=22.14.0'}
-
-  '@rljson/validate@0.0.4':
-    resolution: {integrity: sha512-p/LuhAH4IwffwNFawMLaj5coQhRpSgRsbtuOPSFYEBImBvlinZ/SdLHRIweAkBhWKc9qKxhZh49OJQn1yEQudQ==}
     engines: {node: '>=22.14.0'}
 
   '@rollup/pluginutils@5.1.4':
@@ -2022,30 +2013,12 @@ snapshots:
       '@rljson/json': 0.0.7
       js-base64: 3.7.7
 
-  '@rljson/io@0.0.4':
-    dependencies:
-      '@rljson/hash': 0.0.9
-      '@rljson/json': 0.0.7
-      '@rljson/rljson': 0.0.7
-      '@rljson/validate': 0.0.4
-
   '@rljson/json@0.0.7': {}
-
-  '@rljson/rljson@0.0.6':
-    dependencies:
-      '@rljson/hash': 0.0.9
-      '@rljson/json': 0.0.7
 
   '@rljson/rljson@0.0.7':
     dependencies:
       '@rljson/hash': 0.0.9
       '@rljson/json': 0.0.7
-
-  '@rljson/validate@0.0.4':
-    dependencies:
-      '@rljson/hash': 0.0.9
-      '@rljson/json': 0.0.7
-      '@rljson/rljson': 0.0.6
 
   '@rollup/pluginutils@5.1.4(rollup@4.35.0)':
     dependencies:
