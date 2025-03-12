@@ -26,7 +26,8 @@
     "prebuild": "npm run test",
     "prepublishOnly": "npm run build && npm run test",
     "lint": "npx eslint",
-    "updateGoldens": "cross-env UPDATE_GOLDENS=true npm test"
+    "updateGoldens": "cross-env UPDATE_GOLDENS=true npm test",
+    "copyIoMem": "npx vite-node test/setup/copy-io-mem.ts"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",
@@ -46,11 +47,22 @@
     "vite-plugin-dts": "^4.5.3",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.0.8",
-    "vitest-dom": "^0.1.1"
+    "vitest-dom": "^0.1.1",
+    "chalk": "^5.4.1"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
       "esbuild"
-    ]
+    ],
+    "overrides": {
+      "@rljson/io": "link:../../../.pnpm/global/5/node_modules/@rljson/io",
+      "@rljson/rljson": "link:../../../.pnpm/global/5/node_modules/@rljson/rljson"
+    }
+  },
+  "dependencies": {
+    "@rljson/hash": "^0.0.9",
+    "@rljson/io": "^0.0.1",
+    "@rljson/json": "^0.0.7",
+    "@rljson/rljson": "^0.0.6"
   }
 }

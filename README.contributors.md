@@ -141,3 +141,17 @@ Run tests again.
 Set `export const updateGoldens` to `false`.
 
 Run tests again.
+
+## Update io-mem.ts
+
+To test the `IoTests` class we need an real instance of `Io`.
+We could just execute `pnpm install @rljson/io-mem`. But this would lead to
+a circular dependency, because `io-mem` uses `io-test` too.
+
+As a workaround we decided to keep a copy of `io-mem.ts` in `test/setup/io-mem.ts`.
+
+To update that copy, execute
+
+```bash
+pnpm copyIoMem
+```

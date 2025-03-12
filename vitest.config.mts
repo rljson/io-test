@@ -2,14 +2,13 @@
 
 import { defineConfig } from 'vite';
 
-
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   return {
     test: {
       globals: true,
       environment: 'node',
-      setupFiles: ['./test/test-setup.ts'],
+      setupFiles: ['./test/setup/test-setup.ts'],
       include: ['**/test/**/*.spec.ts'],
 
       reporters: ['default'],

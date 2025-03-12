@@ -1,16 +1,10 @@
-import { Foo } from './foo.ts';
+// @license
+// Copyright (c) 2025 Rljson
+//
+// Use of this source code is governed by terms that can be
+// found in the LICENSE file in the root of this package.
 
-
-/**
- * The example function demonstrates how the package works
- */
-export const example = () => {
-  const print = console.log;
-  const assert = console.assert;
-
-  const foo = new Foo();
-  print(foo.foo());
-  assert(foo.foo() === 'bar');
+// Run »pnpm updateGoldens« when you change this file
+export const example = async () => {
+  console.log('Please checkout "test/io-test.spec.ts" to see IoTest in action');
 };
-
-export class X {}
