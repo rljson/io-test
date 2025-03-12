@@ -16,7 +16,13 @@ export default defineConfig({
       formats: ['es'],
     },
     rollupOptions: {
-      external: [],
+      external: [
+        'vitest',
+        '@rljson/hash',
+        '@rljson/io',
+        '@rljson/json',
+        '@rljson/rljson',
+      ],
       output: {
         globals: {},
       },

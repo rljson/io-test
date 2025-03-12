@@ -20,6 +20,9 @@ importers:
       '@rljson/rljson':
         specifier: ^0.0.7
         version: 0.0.7
+      vitest:
+        specifier: ^3.0.8
+        version: 3.0.8(@types/node@22.13.10)
     devDependencies:
       '@types/node':
         specifier: ^22.13.10
@@ -72,9 +75,6 @@ importers:
       vite-tsconfig-paths:
         specifier: ^5.1.4
         version: 5.1.4(typescript@5.8.2)(vite@6.2.1(@types/node@22.13.10))
-      vitest:
-        specifier: ^3.0.8
-        version: 3.0.8(@types/node@22.13.10)
       vitest-dom:
         specifier: ^0.1.1
         version: 0.1.1(vitest@3.0.8(@types/node@22.13.10))
