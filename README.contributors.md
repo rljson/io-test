@@ -172,8 +172,8 @@ git commit -am"$MESSAGE"
 We aim to work with the latest versions of our dependencies.
 
 ```bash
-rm pnpm-lock.yaml
-pnpm install
+rm pnpm-lock.yaml &&\
+pnpm install &&\
 pnpm update --latest &&\
 git commit -am"Update dependencies"
 ```
