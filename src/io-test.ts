@@ -4,7 +4,6 @@
 // Use of this source code is governed by terms that can be
 // found in the LICENSE file in the root of this package.
 
-import { hip } from '@rljson/hash';
 import { Io } from '@rljson/io';
 import { TableType } from '@rljson/rljson';
 
@@ -79,11 +78,11 @@ export class IoTest {
         });
       });
 
-      describe('write(request)', () => {
+      describe('write(request)', async () => {
         it('throws, when a table');
 
         it('adds a new table when not existing', async () => {
-          hip({});
+          await io.createTable({ name: 'tableA', type: 'properties' });
 
           await io.write({
             data: {
@@ -102,6 +101,8 @@ export class IoTest {
         });
 
         it('adds data to existing data', async () => {
+          await io.createTable({ name: 'tableA', type: 'properties' });
+
           // Write a first item
           await io.write({
             data: {
@@ -138,6 +139,8 @@ export class IoTest {
 
         describe('throws', () => {
           it('when the table has a different type then an existing one', async () => {
+            await io.createTable({ name: 'tableA', type: 'properties' });
+
             await io.write({
               data: {
                 tableA: {
@@ -200,6 +203,8 @@ export class IoTest {
 
         describe('returns Rljson containing the table with the one row', () => {
           it('when the data exists', async () => {
+            await io.createTable({ name: 'tableA', type: 'properties' });
+
             await io.write({
               data: {
                 tableA: {
@@ -231,6 +236,8 @@ export class IoTest {
           });
 
           it('throws when the row does not exist', async () => {
+            await io.createTable({ name: 'tableA', type: 'properties' });
+
             await io.write({
               data: {
                 tableA: {

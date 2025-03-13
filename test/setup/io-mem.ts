@@ -6,7 +6,7 @@
 
 import { hip, hsh } from '@rljson/hash';
 import { Io } from '@rljson/io';
-import { Hashed } from '@rljson/json';
+import { equals, Hashed, JsonValue } from '@rljson/json';
 import { ContentType, Rljson, TableType } from '@rljson/rljson';
 
 /**
@@ -14,17 +14,38 @@ import { ContentType, Rljson, TableType } from '@rljson/rljson';
  */
 export class IoMem implements Io {
   // ...........................................................................
-  // Geeral
+  // Constructor & example
+
+  static example = () => {
+    return new IoMem();
+  };
+
+  // ...........................................................................
+  // General
   isReady() {
     return Promise.resolve();
   }
 
+  dump(): Promise<Rljson> {
+    return this._dump();
+  }
+
   // ...........................................................................
-  // Read and write data
+  // Rows
 
   readRow(request: { table: string; rowHash: string }): Promise<Rljson> {
     return this._readRow(request);
   }
+
+  readRows(request: {
+    table: string;
+    where: { [column: string]: JsonValue };
+  }): Promise<Rljson> {
+    return this._readRows(request);
+  }
+
+  // ...........................................................................
+  // Write
 
   write(request: { data: Rljson }): Promise<void> {
     return this._write(request);
@@ -45,6 +66,8 @@ export class IoMem implements Io {
   // ######################
   // Private
   // ######################
+
+  private _data: Hashed<Rljson> = hip({});
 
   // ...........................................................................
   private async _createTable(request: {
@@ -100,11 +123,10 @@ export class IoMem implements Io {
 
     return result;
   }
-  static example = () => {
-    return new IoMem();
-  };
 
-  async dump(): Promise<Rljson> {
+  // ...........................................................................
+
+  private async _dump(): Promise<Rljson> {
     return this._data;
   }
 
@@ -116,6 +138,10 @@ export class IoMem implements Io {
     for (const table of tables) {
       if (table.startsWith('_')) {
         continue;
+      } else {
+        if (!this._data[table]) {
+          throw new Error(`Table ${table} does not exist`);
+        }
       }
 
       const oldTable = this._data[table] as TableType;
@@ -151,5 +177,32 @@ export class IoMem implements Io {
     hip(this._data, updateExistingHashes, throwIfOnWrongHashes);
   }
 
-  private _data: Hashed<Rljson> = hip({});
+  // ...........................................................................
+  private async _readRows(request: {
+    table: string;
+    where: { [column: string]: JsonValue };
+  }): Promise<Rljson> {
+    const table = this._data[request.table] as TableType;
+
+    if (!table) {
+      throw new Error(`Table ${request.table} not found`);
+    }
+
+    const result: Rljson = {
+      [request.table]: {
+        _data: table._data.filter((row) => {
+          for (const column in request.where) {
+            const a = row[column];
+            const b = request.where[column];
+            if (!equals(a, b, { ignoreHashes: true })) {
+              return false;
+            }
+          }
+          return true;
+        }),
+      },
+    } as any;
+
+    return result;
+  }
 }
