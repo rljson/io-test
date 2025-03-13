@@ -4,7 +4,6 @@
 // Use of this source code is governed by terms that can be
 // found in the LICENSE file in the root of this package.
 
-import { hip } from '@rljson/hash';
 import { Io } from '@rljson/io';
 import { TableType } from '@rljson/rljson';
 
@@ -48,18 +47,42 @@ export class IoTest {
       afterAll(async () => {});
 
       describe('createTable(request)', () => {
-        it('creates the table, when it not exists', async () => {});
+        it('should add a table', async () => {
+          await io.createTable({ name: 'table1', type: 'properties' });
+          let tables = await io.tables();
+          expect(tables).toEqual(['table1']);
 
-        it('throws when the table already exists with a different type', async () => {});
+          await io.createTable({ name: 'table2', type: 'cake' });
+          tables = await io.tables();
+          expect(tables).toEqual(['table1', 'table2']);
+        });
 
-        it('does nothing when the table already exists with the same type', async () => {});
+        describe('createTable', async () => {
+          describe('throws', async () => {
+            it('if the table already exists with a different type', async () => {
+              await io.createTable({ name: 'table', type: 'properties' });
+              await expect(
+                io.createTable({ name: 'table', type: 'buffet' }),
+              ).rejects.toThrow();
+            });
+          });
+
+          describe('does nothing', async () => {
+            it('if the table already exists with the same type', async () => {
+              await io.createTable({ name: 'table', type: 'properties' });
+              expect(await io.tables()).toEqual(['table']);
+              await io.createTable({ name: 'table', type: 'properties' });
+              expect(await io.tables()).toEqual(['table']);
+            });
+          });
+        });
       });
 
-      describe('write(request)', () => {
+      describe('write(request)', async () => {
         it('throws, when a table');
 
         it('adds a new table when not existing', async () => {
-          hip({});
+          await io.createTable({ name: 'tableA', type: 'properties' });
 
           await io.write({
             data: {
@@ -78,6 +101,8 @@ export class IoTest {
         });
 
         it('adds data to existing data', async () => {
+          await io.createTable({ name: 'tableA', type: 'properties' });
+
           // Write a first item
           await io.write({
             data: {
@@ -114,6 +139,8 @@ export class IoTest {
 
         describe('throws', () => {
           it('when the table has a different type then an existing one', async () => {
+            await io.createTable({ name: 'tableA', type: 'properties' });
+
             await io.write({
               data: {
                 tableA: {
@@ -176,6 +203,8 @@ export class IoTest {
 
         describe('returns Rljson containing the table with the one row', () => {
           it('when the data exists', async () => {
+            await io.createTable({ name: 'tableA', type: 'properties' });
+
             await io.write({
               data: {
                 tableA: {
@@ -207,6 +236,8 @@ export class IoTest {
           });
 
           it('throws when the row does not exist', async () => {
+            await io.createTable({ name: 'tableA', type: 'properties' });
+
             await io.write({
               data: {
                 tableA: {

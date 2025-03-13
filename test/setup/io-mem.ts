@@ -6,26 +6,78 @@
 
 import { hip, hsh } from '@rljson/hash';
 import { Io } from '@rljson/io';
-import { Hashed } from '@rljson/json';
+import { equals, Hashed, JsonValue } from '@rljson/json';
 import { ContentType, Rljson, TableType } from '@rljson/rljson';
 
 /**
  * In-Memory implementation of the Rljson Io interface.
  */
 export class IoMem implements Io {
+  // ...........................................................................
+  // Constructor & example
+
+  static example = () => {
+    return new IoMem();
+  };
+
+  // ...........................................................................
+  // General
   isReady() {
     return Promise.resolve();
   }
 
-  /* v8 ignore start */
-  async createTable(request: {
+  dump(): Promise<Rljson> {
+    return this._dump();
+  }
+
+  // ...........................................................................
+  // Rows
+
+  readRow(request: { table: string; rowHash: string }): Promise<Rljson> {
+    return this._readRow(request);
+  }
+
+  readRows(request: {
+    table: string;
+    where: { [column: string]: JsonValue };
+  }): Promise<Rljson> {
+    return this._readRows(request);
+  }
+
+  // ...........................................................................
+  // Write
+
+  write(request: { data: Rljson }): Promise<void> {
+    return this._write(request);
+  }
+
+  // ...........................................................................
+  // Table management
+  createTable(request: { name: string; type: ContentType }): Promise<void> {
+    return this._createTable(request);
+  }
+
+  async tables(): Promise<string[]> {
+    const keys = Object.keys(this._mem);
+    const tables = keys.filter((key) => !key.startsWith('_'));
+    return tables;
+  }
+
+  // ######################
+  // Private
+  // ######################
+
+  private _mem: Hashed<Rljson> = hip({});
+
+  // ...........................................................................
+  private async _createTable(request: {
     name: string;
     type: ContentType;
   }): Promise<void> {
     const { name, type } = request;
 
     // Get the existing table
-    const existing = this._data[name] as TableType;
+    const existing = this._mem[name] as TableType;
     if (existing) {
       // Throw if the existing table has a different type
       if (existing._type !== type) {
@@ -37,16 +89,19 @@ export class IoMem implements Io {
 
     // No table exists yet. Create it.
     else {
-      this._data[name] ??= {
+      this._mem[name] ??= {
         _data: [],
         _type: type,
       };
     }
   }
-  /* v8 ignore stop */
+
   // ...........................................................................
-  async readRow(request: { table: string; rowHash: string }): Promise<Rljson> {
-    const table = this._data[request.table] as TableType;
+  private async _readRow(request: {
+    table: string;
+    rowHash: string;
+  }): Promise<Rljson> {
+    const table = this._mem[request.table] as TableType;
 
     if (!table) {
       throw new Error(`Table ${request.table} not found`);
@@ -68,32 +123,29 @@ export class IoMem implements Io {
 
     return result;
   }
-  static example = () => {
-    return new IoMem();
-  };
 
-  async dump(): Promise<Rljson> {
-    return this._data;
+  // ...........................................................................
+
+  private async _dump(): Promise<Rljson> {
+    return this._mem;
   }
 
   // ...........................................................................
-  async write(request: { data: Rljson }): Promise<void> {
+  private async _write(request: { data: Rljson }): Promise<void> {
     const addedData = hsh(request.data);
     const tables = Object.keys(addedData);
 
     for (const table of tables) {
       if (table.startsWith('_')) {
         continue;
+      } else {
+        if (!this._mem[table]) {
+          throw new Error(`Table ${table} does not exist`);
+        }
       }
 
-      const oldTable = this._data[table] as TableType;
+      const oldTable = this._mem[table] as TableType;
       const newTable = addedData[table] as TableType;
-
-      // Table does not exist yet. Insert all
-      if (!oldTable) {
-        this._data[table] = newTable;
-        continue;
-      }
 
       // Make sure oldTable and newTable have the same type
       if (oldTable._type !== newTable._type) {
@@ -113,15 +165,38 @@ export class IoMem implements Io {
     }
 
     // Recalc main hashes
-    this._data._hash = '';
+    this._mem._hash = '';
     const updateExistingHashes = false;
     const throwIfOnWrongHashes = false;
-    hip(this._data, updateExistingHashes, throwIfOnWrongHashes);
+    hip(this._mem, updateExistingHashes, throwIfOnWrongHashes);
   }
 
-  // ######################
-  // Private
-  // ######################
+  // ...........................................................................
+  private async _readRows(request: {
+    table: string;
+    where: { [column: string]: JsonValue };
+  }): Promise<Rljson> {
+    const table = this._mem[request.table] as TableType;
 
-  private _data: Hashed<Rljson> = hip({});
+    if (!table) {
+      throw new Error(`Table ${request.table} not found`);
+    }
+
+    const result: Rljson = {
+      [request.table]: {
+        _data: table._data.filter((row) => {
+          for (const column in request.where) {
+            const a = row[column];
+            const b = request.where[column];
+            if (!equals(a, b)) {
+              return false;
+            }
+          }
+          return true;
+        }),
+      },
+    } as any;
+
+    return result;
+  }
 }
